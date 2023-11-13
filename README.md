@@ -57,7 +57,7 @@ This method is cool because it's less likely to get tricked by weird patterns or
 
 The HDEMethod is particularly useful when you need to estimate the underlying pattern or distribution of a dataset and is robust against variations that might lead to less accurate density estimates.
 
-Figure below shows integrated mean squared error across for varied bin count, sample count in cases of ßeveral selected sample probability distributions:
+Figure below shows integrated mean squared error across varied bin count, sample count in cases of ßeveral selected sample probability distributions:
 ![IMSE of HDEM for several sampled distributions](IMSE_plot.png)
 
 ## Suitability for low resource environments
