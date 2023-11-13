@@ -35,7 +35,7 @@ python visualize.py
 - Execute `experiment.py` to run the experiments.
 - Execute `visualize.py` to create visualizations.
 
-## Method Explanation (ELI5)
+## Method Explanation
 
 Imagine you have a bunch of observations, like a list of ages at a school. Now, you want to make a smooth curve that tells you how many kids there are around each age. The HDEMethod does this by creating a histogram, which is like a bar chart that shows how many kids fall into different age groups (these groups are called bins).
 
@@ -56,6 +56,9 @@ This method is cool because it's less likely to get tricked by weird patterns or
 - **Weighting Function**: This function penalizes wider bins, favoring more precise estimates.
 
 The HDEMethod is particularly useful when you need to estimate the underlying pattern or distribution of a dataset and is robust against variations that might lead to less accurate density estimates.
+
+Figure below shows integrated mean squared error across for varied bin count, sample count in cases of ßeveral selected sample probability distributions:
+![IMSE of HDEM for several sampled distributions](IMSE_plot.png)
 
 ## Suitability for low resource environments
 
