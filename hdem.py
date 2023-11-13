@@ -1,7 +1,9 @@
 # Let's define the HDEMethod class according to the description provided.
 import numpy as np
+import matplotlib.pyplot as plt
 from scipy.stats import rv_continuous
 from typing import List, Tuple, Callable
+from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error
 
 class HDEMethod:
     """
@@ -61,14 +63,18 @@ class HDEMethod:
         :param omega: The number of bin intervals to consider in the estimation.
         :return: The estimated density at x.
         """
-        # Find the indices of the bins that x falls into
         k = np.digitize(x, self.bins) - 1
         r = max(k - omega + 1, 0)
         s = min(k + omega, len(self.histogram))
 
-        # Calculate the average density values for the range of intervals
+        if s - r <= 0:  # Handle empty slice
+            return 0.0
+
         densities = [self.histogram[i:i + omega].mean() for i in range(r, s - omega + 1)]
-        expected_density = np.mean(densities)
+        if densities:  # Check if densities list is not empty
+            expected_density = np.mean(densities)
+        else:
+            expected_density = 0.0
 
         return expected_density
 
@@ -102,57 +108,71 @@ class HDEMethod:
         omega = self.find_optimal_omega(x, weighting_function)
 
         # Calculate the normalizing constant C
-        C = 1 / np.sum([self.estimate_density(x, omega) for x in self.bins[:-1]])
+        density_sums = [self.estimate_density(x, omega) for x in self.bins[:-1]]
+        if np.sum(density_sums) == 0:  # Avoid division by zero
+            C = 0
+        else:
+            C = 1 / np.sum(density_sums)
 
         # Calculate the final density estimate
         final_density = C * weighting_function(omega) * self.estimate_density(x, omega)
 
         return final_density
 
-# Generate a sample distribution (e.g., a beta distribution)
-np.random.seed(42)  # for reproducibility
-sample_data = np.random.beta(a=2, b=5, size=1000)
+if "__main__" == __name__:
+    # Generate a sample distribution (e.g., a beta distribution)
+    np.random.seed(42)  # for reproducibility
+    sample_data = np.random.beta(a=2, b=5, size=1000)
 
-# Define bin width and anchor position
-bin_width = 0.05
-anchor = 0
+    # Define bin width and anchor position
+    bin_width = 0.05
+    anchor = 0
 
-# Initialize HDEMethod
-hde_method = HDEMethod(observations=sample_data, bin_width=bin_width, anchor=anchor)
+    # Initialize HDEMethod
+    hde_method = HDEMethod(observations=sample_data, bin_width=bin_width, anchor=anchor)
 
-# Estimate density for a specific value
-x_value = 0.5  # Example point
-density_estimate = hde_method.final_density_estimate(x_value)
+    # Estimate density for a specific value
+    x_value = 0.5  # Example point
+    density_estimate = hde_method.final_density_estimate(x_value)
 
-print(f"Density Estimate at x = {x_value}: {density_estimate}")
+    print(f"Density Estimate at x = {x_value}: {density_estimate}")
 
-# PLOT
+    # Generate a range of x-values for density estimation
+    x_values = np.linspace(sample_data.min(), sample_data.max(), 500)
+    density_estimates = [hde_method.final_density_estimate(x) for x in x_values]
 
-import matplotlib.pyplot as plt
-from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error
-# Generate a range of x-values for density estimation
-x_values = np.linspace(sample_data.min(), sample_data.max(), 500)
-density_estimates = [hde_method.final_density_estimate(x) for x in x_values]
+    # Compute histogram counts for MSE and MAPE calculation
+    counts, bin_edges = np.histogram(sample_data, bins=40, density=True)
+    bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
+    estimated_densities = [hde_method.final_density_estimate(x) for x in bin_centers]
 
-# Plotting
-plt.figure(figsize=(10, 6))
-plt.hist(sample_data, bins=40, density=True, alpha=0.6, label='Sample Distribution')
-plt.plot(x_values, density_estimates, label='Density Estimates', color='red')
-plt.xlabel('Value')
-plt.ylabel('Density')
-plt.title('Sample Distribution vs. Density Estimates')
-plt.legend()
-plt.show()
+    # Compute scaling factor for density estimates
+    # This is done by comparing the maximum of the histogram density to the maximum of the estimated densities
+    scale_factor = max(counts) / max(density_estimates)
+    scaled_density_estimates = [de * scale_factor for de in density_estimates]
 
-# Compute MAPE and MSE
-# For this, we need to compare the histogram counts with the estimated densities
-counts, bin_edges = np.histogram(sample_data, bins=40, density=True)
-bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
-estimated_densities = [hde_method.final_density_estimate(x) for x in bin_centers]
+    # Plotting with adjusted scaling for density estimates
+    fig, ax1 = plt.subplots(figsize=(10, 6))
 
-# Compute errors
-mse = mean_squared_error(counts, estimated_densities)
-mape = mean_absolute_percentage_error(counts, estimated_densities)
+    # Plot histogram on the first y-axis
+    color = 'tab:blue'
+    ax1.set_xlabel('Value')
+    ax1.set_ylabel('Sample Distribution', color=color)
+    ax1.hist(sample_data, bins=40, density=True, alpha=0.6, color=color, label='Sample Distribution')
+    ax1.tick_params(axis='y', labelcolor=color)
 
-print(f"Mean Squared Error (MSE): {mse}")
-print(f"Mean Absolute Percentage Error (MAPE): {mape}")
+    # Plot density estimates on the same y-axis
+    color = 'tab:green'
+    ax1.plot(x_values, scaled_density_estimates, label='Density Estimates (Scaled)', color=color)
+
+    ax1.legend(loc='upper left')
+
+    plt.title('Sample Distribution and Scaled Density Estimates')
+    plt.show()
+
+    # Compute MSE and MAPE
+    mse = mean_squared_error(counts, estimated_densities)
+    mape = mean_absolute_percentage_error(counts, estimated_densities)
+
+    print(f"Mean Squared Error (MSE): {mse}")
+    print(f"Mean Absolute Percentage Error (MAPE): {mape}")
