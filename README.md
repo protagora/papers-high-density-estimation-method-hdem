@@ -57,20 +57,20 @@ This method is cool because it's less likely to get tricked by weird patterns or
 
 The HDEMethod is particularly useful when you need to estimate the underlying pattern or distribution of a dataset and is robust against variations that might lead to less accurate density estimates.
 
-## On method characteristics
+## Suitability for low resource environments
 
 The Histogram Density Estimation Method (HDEMethod) is well-suited for low-resource hardware for several reasons:
 
-    **Computational Simplicity:** Histograms are fundamentally simple structures that involve counting the number of observations within predefined intervals (bins). This process doesn't require complex mathematical computations, which can be beneficial for hardware with limited processing power.
+**Computational Simplicity:** Histograms are fundamentally simple structures that involve counting the number of observations within predefined intervals (bins). This process doesn't require complex mathematical computations, which can be beneficial for hardware with limited processing power.
 
-    **Memory Efficiency:** Unlike some other density estimation techniques (e.g., kernel density estimation), histograms do not require storing large matrices or performing operations that have high memory demands. The method primarily relies on incrementing counts in an array, which is generally memory-efficient.
+**Memory Efficiency:** Unlike some other density estimation techniques (e.g., kernel density estimation), histograms do not require storing large matrices or performing operations that have high memory demands. The method primarily relies on incrementing counts in an array, which is generally memory-efficient.
 
-    **Scalability:** The method can be scaled to handle large datasets by adjusting the bin width and the number of bins. For large datasets, using fewer and wider bins can reduce computational and memory requirements, making the method more adaptable to hardware constraints.
+**Scalability:** The method can be scaled to handle large datasets by adjusting the bin width and the number of bins. For large datasets, using fewer and wider bins can reduce computational and memory requirements, making the method more adaptable to hardware constraints.
 
-    **Parallelizability:** The task of counting observations within bins can be easily parallelized. If the low-resource hardware supports parallel processing (even at a basic level), this can speed up computation without the need for high-end hardware capabilities.
+**Parallelizability:** The task of counting observations within bins can be easily parallelized. If the low-resource hardware supports parallel processing (even at a basic level), this can speed up computation without the need for high-end hardware capabilities.
 
-    **Incremental Update:** If new data comes in, you do not need to recompute the entire histogram. You can simply update the relevant bins, which is a low-cost operation.
+**Incremental Update:** If new data comes in, you do not need to recompute the entire histogram. You can simply update the relevant bins, which is a low-cost operation.
 
-    **Simplicity of Implementation:** The method can be implemented with basic programming constructs and does not require advanced libraries or software, making it suitable for systems where such resources might not be available.
+**Simplicity of Implementation:** The method can be implemented with basic programming constructs and does not require advanced libraries or software, making it suitable for systems where such resources might not be available.
 
 HDEMethod offers a good balance between simplicity, efficiency, and effectiveness for density estimation, making it a reasonable choice for low-resource hardware, especially when there's a need to process data with limited computational and memory capacity.
