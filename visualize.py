@@ -34,7 +34,7 @@ def plot_errors(df, error_type):
     
     # Show the plot
     plt.show()
-    plt.close()  # Close the plot to free memory
+    plt.close()
 
 # Plot each error type
 for error in ['MSE', 'MAE', 'IMSE']:

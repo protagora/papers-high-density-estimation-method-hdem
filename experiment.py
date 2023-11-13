@@ -1,9 +1,8 @@
-# experiment.py
 import numpy as np
 import pandas as pd
 from hdem import HDEMethod
 from scipy.stats import alpha, beta, gamma, weibull_min, norm, expon, chi2, lognorm, t, f, poisson, binom
-from sklearn.metrics import mean_squared_error, mean_absolute_error, mean_absolute_percentage_error, r2_score
+from sklearn.metrics import mean_squared_error, mean_absolute_error
 
 # Define utility functions
 def generate_distribution(dist_name, size):
@@ -44,7 +43,7 @@ def compute_errors(true_counts, estimated_densities, bin_width, total_samples, d
     # Adjust estimated densities to match the scale of true counts
     estimated_counts = estimated_densities * bin_width * total_samples
 
-    # Clip true_counts to avoid division by very small numbers in MAPE calculation
+    # CAUTION: Clip true_counts to avoid division by very small numbers (may help in some cases)
     # clipped_true_counts = np.clip(true_counts, 1e-6, None)
 
     # Generate x_values for true density
@@ -61,8 +60,6 @@ def compute_errors(true_counts, estimated_densities, bin_width, total_samples, d
     return {
         'MSE': mean_squared_error(true_counts, estimated_counts),
         'MAE': mean_absolute_error(true_counts, estimated_counts),
-        # 'MAPE': mean_absolute_percentage_error(clipped_true_counts, estimated_counts),
-        # 'R-Squared': r2_score(true_counts, estimated_counts),
         'IMSE': imse
     }
 

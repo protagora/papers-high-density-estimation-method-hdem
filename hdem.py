@@ -1,4 +1,3 @@
-# Let's define the HDEMethod class according to the description provided.
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import rv_continuous
