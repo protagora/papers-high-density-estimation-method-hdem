@@ -2,18 +2,19 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Load the results
-df = pd.read_csv('experiment_results.csv')
+def plot_errors_by_sample_size(df, error_type):
+    plt.figure(figsize=(12, 8))
+    sns.lineplot(data=df, x='Bin Count', y=error_type, hue='Sample Size', style='Sample Size', markers=True)
+    plt.title(f'Total {error_type} vs Bin Count for Different Sample Sizes')
+    plt.xlabel('Bin Count')
+    plt.ylabel(f'Total {error_type}')
+    legend = plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0)
+    plt.grid(True)
+    plt.tight_layout()
+    plt.savefig(f"Total_{error_type}_vs_Bin_Count.png", bbox_extra_artists=(legend,), bbox_inches='tight')
+    plt.show()
+    plt.close()
 
-# Convert the 'Errors' column from string to dictionary
-import ast
-df['Errors'] = df['Errors'].apply(ast.literal_eval)
-
-# Unpack the errors into separate columns
-df_errors = pd.json_normalize(df['Errors'])
-df = pd.concat([df.drop(columns=['Errors']), df_errors], axis=1)
-
-# Plotting function
 def plot_errors(df, error_type):
     plt.figure(figsize=(12, 8))
     sns.lineplot(data=df, x='Sample Size', y=error_type, hue='Distribution', style='Bin Count', markers=True)
@@ -22,20 +23,20 @@ def plot_errors(df, error_type):
     plt.yscale('log')
     plt.xlabel('Sample Size')
     plt.ylabel(error_type)
-    # Place the legend outside of the figure/plot
     legend = plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0)
     plt.grid(True)
-    
-    # Adjust the layout
     plt.tight_layout()
-    
-    # Save the plot
     plt.savefig(f"{error_type}_plot.png", bbox_extra_artists=(legend,), bbox_inches='tight')
-    
-    # Show the plot
     plt.show()
     plt.close()
 
-# Plot each error type
-for error in ['MSE', 'MAE', 'IMSE']:
+# Load the results
+df = pd.read_csv('experiment_results.csv')
+
+# Plot each error type by sample size first
+for error in ['MSE', 'MAE', 'Normalized MSE', 'Normalized MAE', 'IMSE', 'MISE', 'MIAE', 'AMISE']:
     plot_errors(df, error)
+
+# Then plot each error type by bin count
+for error in ['MSE', 'MAE', 'Normalized MSE', 'Normalized MAE', 'IMSE', 'MISE', 'MIAE', 'AMISE']:
+    plot_errors_by_sample_size(df, error)
