@@ -44,14 +44,28 @@ class HDEMethod:
         max_edge = self.anchor + np.ceil((self.observations.max() - self.anchor) / self.bin_width) * self.bin_width
         return np.arange(min_edge, max_edge, self.bin_width)
 
+    # def calculate_histogram(self) -> np.ndarray:
+    #     """
+    #     Calculates the histogram for the observations.
+        
+    #     :return: An array representing the bin counts.
+    #     """
+    #     counts, _ = np.histogram(self.observations, bins=self.bins)
+    #     return self.normalize_histogram(counts)
+    
     def calculate_histogram(self) -> np.ndarray:
         """
-        Calculates the histogram for the observations.
+        Calculates and normalizes the histogram to represent a probability density distribution.
         
-        :return: An array representing the bin counts.
+        :return: An array representing the probability density for each bin.
         """
         counts, _ = np.histogram(self.observations, bins=self.bins)
-        return self.normalize_histogram(counts)
+        # Normalize by total number of observations and the bin width
+        total_observations = len(self.observations)
+        if total_observations > 0 and self.bin_width > 0:
+            return counts / (total_observations * self.bin_width)
+
+        return counts
 
     def estimate_density(self, x: float, omega: int) -> float:
         """
