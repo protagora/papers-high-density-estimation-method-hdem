@@ -81,7 +81,7 @@ def plot_errors(df, error_type, path='tests'):
         print(f"Column(s) for {error_type} not found in DataFrame.")
 
 # Load the results
-df = pd.read_csv('experiment4_results.csv')
+df = pd.read_csv('experiment_results.csv')
 path = os.path.join('tests', 'errors')
 errors = ['MSE', 'MAE', 'Normalized_MSE', 'Normalized_MAE', 'IMSE', 'MIAE', 'AMISE']
 

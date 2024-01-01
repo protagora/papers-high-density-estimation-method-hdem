@@ -161,7 +161,7 @@ def main():
                 results.append(result_entry)
 
     df_results = pd.DataFrame(results)
-    df_results.to_csv('experiment4_results.csv', index=False)
+    df_results.to_csv('experiment_results.csv', index=False)
     print("Experiment 4 completed and results saved.")
 
 if __name__ == "__main__":

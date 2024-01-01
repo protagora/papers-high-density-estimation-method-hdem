@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from experiment2 import generate_distribution
+from phd.HDEM.versions.experiment2 import generate_distribution
 import os
 
 def plot_distribution(dist_name, sample_size, destination='tests'):
