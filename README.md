@@ -60,6 +60,9 @@ The HDEMethod is particularly useful when you need to estimate the underlying pa
 Figure below shows integrated mean squared error across varied bin count, sample count in cases of ßeveral selected sample probability distributions:
 ![IMSE of HDEM for several sampled distributions](tests/errors/IMSE_vs_Sample_Size_comparison.png)
 
+Following figure compares densities of true (original) distribution, ordinary equal-width bin histogram and HDEM:
+![Distribution: Beta, 25 bins, 1000 samples](tests/densities/density_plot_beta_n1000_bins25_iter3.png)
+
 ## Suitability for low resource environments
 
 The Histogram Density Estimation Method (HDEMethod) is well-suited for low-resource hardware for several reasons:
