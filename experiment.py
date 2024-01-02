@@ -11,9 +11,9 @@ from scipy.stats import sem, t
 
 # Constants
 MAX_SAMPLE_SIZE = 100000
-sample_sizes = [10, 50, 100, 500, 1000, 5000, 10000, 50000, 100000]
+sample_sizes = [10, 50, 100, 500, 1000, 5000]
 bin_counts = [10, 15, 20, 25, 30, 50, 100]
-distributions = ['beta', 'gamma', 'weibull', 'expon', 'chi2', 'poisson', 'binom', 'combined']
+distributions = ['beta', 'gamma', 'weibull', 'expon', 'chi2']
 num_iterations = 10  # Number of iterations for each configuration
 
 # Create directories
@@ -161,7 +161,7 @@ def main():
     for dist_name in distributions:
         full_sample = generate_distribution(dist_name, MAX_SAMPLE_SIZE)
 
-        for sample_size in sample_sizes[:-3]:
+        for sample_size in sample_sizes:
             for num_bins in bin_counts:
                 true_density = compute_true_density(full_sample, num_bins)
 
