@@ -63,6 +63,54 @@ Figure below shows integrated mean squared error across varied bin count, sample
 Following figure compares densities of true (original) distribution, ordinary equal-width bin histogram and HDEM:
 ![Distribution: Beta, 25 bins, 1000 samples](tests/densities/density_plot_beta_n1000_bins25_iter3.png)
 
+Typical error improvement for HDEM over equal-bin width histogram:
+
+Average Percent Difference for beta:
+  MSE: 7.79%
+  MAE: 5.95%
+  Normalized_MSE: 7.79%
+  Normalized_MAE: 5.95%
+  IMSE: 7.79%
+  MIAE: 5.95%
+  AMISE: 7.79%
+
+Average Percent Difference for gamma:
+  MSE: 6.33%
+  MAE: 1.53%
+  Normalized_MSE: 6.33%
+  Normalized_MAE: 1.53%
+  IMSE: 6.33%
+  MIAE: 1.53%
+  AMISE: 6.33%
+
+Average Percent Difference for weibull:
+  MSE: 6.56%
+  MAE: 1.39%
+  Normalized_MSE: 6.56%
+  Normalized_MAE: 1.39%
+  IMSE: 6.56%
+  MIAE: 1.39%
+  AMISE: 6.56%
+
+Average Percent Difference for expon:
+  MSE: 9.17%
+  MAE: 2.11%
+  Normalized_MSE: 9.17%
+  Normalized_MAE: 2.11%
+  IMSE: 9.17%
+  MIAE: 2.11%
+  AMISE: 9.17%
+
+Average Percent Difference for chi2:
+  MSE: 6.71%
+  MAE: 0.11%
+  Normalized_MSE: 6.71%
+  Normalized_MAE: 0.11%
+  IMSE: 6.71%
+  MIAE: 0.11%
+  AMISE: 6.71%
+
+
 ## Suitability for low resource environments
 
 The Histogram Density Estimation Method (HDEMethod) is well-suited for low-resource hardware for several reasons:

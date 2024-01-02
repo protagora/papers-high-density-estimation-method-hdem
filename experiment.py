@@ -125,7 +125,14 @@ def compute_confidence_interval(data, confidence=0.95):
 def accumulate_errors(all_errors, error_key, new_error):
     if error_key not in all_errors:
         all_errors[error_key] = []
-    all_errors[error_key].append(new_error)
+    # Handle both single values and iterables
+    if isinstance(new_error, (list, np.ndarray)):
+        clean_error = [e if np.isfinite(e) else np.nan for e in new_error]
+    else:  # Single value
+        clean_error = [new_error] if np.isfinite(new_error) else [np.nan]
+    all_errors[error_key].extend(clean_error)
+
+
 
 def add_confidence_intervals(result_entry, all_errors):
     for error_key, errors in all_errors.items():
@@ -134,13 +141,27 @@ def add_confidence_intervals(result_entry, all_errors):
         result_entry[f'CI_{error_key}_Lower'] = ci_lower
         result_entry[f'CI_{error_key}_Upper'] = ci_upper
 
+def calculate_percentage_difference(all_errors):
+    percent_diff = {}
+    for key in all_errors:
+        if key.startswith('Hist_') and key.replace('Hist_', 'HDE_') in all_errors:
+            hde_key = key.replace('Hist_', 'HDE_')
+            hist_errors = np.array(all_errors[key])
+            hde_errors = np.array(all_errors[hde_key])
+            # Handle division by zero or NaN values
+            valid_indices = np.where(hist_errors != 0)
+            hist_errors_nonzero = hist_errors[valid_indices]
+            hde_errors_nonzero = hde_errors[valid_indices]
+            percent_diff[key.replace('Hist_', 'Percent_Diff_')] = 100 * (hist_errors_nonzero - hde_errors_nonzero) / hist_errors_nonzero
+    return percent_diff
+
 def main():
     results = []
 
     for dist_name in distributions:
         full_sample = generate_distribution(dist_name, MAX_SAMPLE_SIZE)
 
-        for sample_size in sample_sizes[:-2]:
+        for sample_size in sample_sizes[:-3]:
             for num_bins in bin_counts:
                 true_density = compute_true_density(full_sample, num_bins)
 
@@ -156,9 +177,18 @@ def main():
                     for key, value in errors.items():
                         accumulate_errors(all_errors, key, value)
 
+                # Inside main function, after accumulating errors:
+                percent_diffs = calculate_percentage_difference(all_errors)
+                for key, value in percent_diffs.items():
+                    accumulate_errors(all_errors, key, value)  # Accumulate percentage differences
+
+                # Add confidence intervals and percentage differences to result_entry
                 result_entry = {'Distribution': dist_name, 'Sample Size': sample_size, 'Bin Count': num_bins}
                 add_confidence_intervals(result_entry, all_errors)
+                for key in percent_diffs.keys():
+                    result_entry[key] = np.nanmean(all_errors[key])  # Store the mean of the percent differences
                 results.append(result_entry)
+
 
     df_results = pd.DataFrame(results)
     df_results.to_csv('experiment_results.csv', index=False)
